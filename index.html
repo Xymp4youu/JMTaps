@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Game Reward System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Auth Section -->
+    <div id="authSection" class="container">
+        <div class="auth-card">
+            <div class="logo-container">
+                <img src="Jmtaps.png" alt="Jmtaps Logo" class="logo">
+            </div>
+            <h1>🎮 Game Reward System</h1>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="form-container">
+                <h2>Login</h2>
+                <input type="text" id="loginUsername" placeholder="Username" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button onclick="login()">Login</button>
+                <p>Don't have an account? <a href="#" onclick="showRegister()">Register</a></p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="form-container" style="display:none;">
+                <h2>Register</h2>
+                <input type="text" id="registerUsername" placeholder="Username" required>
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Password" required>
+                <input type="password" id="registerConfirmPassword" placeholder="Confirm Password" required>
+                <button onclick="register()">Register</button>
+                <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboardSection" class="container" style="display:none;">
+        <div class="dashboard">
+            <div class="header">
+                <div class="header-left">
+                    <img src="Jmtaps.png" alt="Jmtaps Logo" class="dashboard-logo">
+                    <h1>🎮 Game Reward Dashboard</h1>
+                </div>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+
+            <!-- Navigation Menu -->
+            <div class="nav-menu">
+                <button class="nav-btn active" onclick="showPage('overview')" id="navOverview">
+                    📊 Overview
+                </button>
+                <button class="nav-btn" onclick="showPage('referral')" id="navReferral">
+                    👥 Referral
+                </button>
+            </div>
+
+            <!-- Overview Page -->
+            <div id="overviewPage" class="page-content">
+
+            <!-- User Info -->
+            <div class="user-info">
+                <h3>Welcome, <span id="username">Player</span>!</h3>
+                <p>Account Created: <span id="accountAge">0</span> days ago</p>
+                <p class="status" id="withdrawStatus">Withdrawal Status: Locked</p>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <h2>💰 Total Balance</h2>
+                <p class="balance-amount" id="totalBalance">0</p>
+                <p class="small-text">Game Coins</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Deposited</h4>
+                    <p id="depositedAmount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Daily Claim</h4>
+                    <p id="dailyClaimAmount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Total Claimed</h4>
+                    <p id="totalClaimed">0</p>
+                </div>
+                <div class="stat-card">
+                    <h4>Withdrawn</h4>
+                    <p id="totalWithdrawn">0</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-section">
+                <!-- Deposit -->
+                <div class="action-card">
+                    <h3>💳 Deposit Coins</h3>
+                    <input type="number" id="depositAmount" placeholder="Enter amount (min: 200)" min="200">
+                    <button onclick="depositCoins()" class="btn-primary">Deposit</button>
+                    <p class="info-text">Minimum deposit: 200 coins | Daily claim: Amount ÷ 8</p>
+                </div>
+
+                <!-- Daily Claim -->
+                <div class="action-card claim-card">
+                    <h3>🎁 Daily Claim</h3>
+                    <p class="next-claim-text">Next claim available: <span id="nextClaimTime">Now</span></p>
+                    
+                    <!-- Calendar Countdown -->
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                    
+                    <button onclick="claimDaily()" id="claimBtn" class="btn-success">Claim Now</button>
+                    <p class="info-text">Claim your daily rewards!</p>
+                </div>
+
+                <!-- Withdraw -->
+                <div class="action-card">
+                    <h3>💸 Withdraw</h3>
+                    <input type="number" id="withdrawAmount" placeholder="Enter amount" min="1">
+                    <button onclick="withdrawCoins()" id="withdrawBtn" class="btn-warning" disabled>Withdraw</button>
+                    <p class="info-text" id="withdrawInfo">Available after 10 days</p>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="history-section">
+                <h3>📜 Transaction History</h3>
+                <div id="transactionHistory" class="transaction-list">
+                    <p class="no-data">No transactions yet</p>
+                </div>
+            </div>
+            </div>
+            <!-- End Overview Page -->
+
+            <!-- Referral Page -->
+            <div id="referralPage" class="page-content" style="display:none;">
+            
+            <!-- How It Works - Moved to Top -->
+            <div class="referral-info-box">
+                <h4>💡 How Referral Rewards Work</h4>
+                <div class="info-steps">
+                    <div class="info-step">
+                        <span class="step-number">1</span>
+                        <div class="step-content">
+                            <h5>Share Your Code</h5>
+                            <p>Copy your unique referral code and share it with friends</p>
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <span class="step-number">2</span>
+                        <div class="step-content">
+                            <h5>Friend Joins & Deposits</h5>
+                            <p>Your friend registers and makes their first deposit (min: 200 coins)</p>
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <span class="step-number">3</span>
+                        <div class="step-content">
+                            <h5>You Earn Bonus!</h5>
+                            <p>Get 50% of their daily claim added to YOUR daily claim permanently!</p>
+                        </div>
+                    </div>
+                    <div class="info-step">
+                        <span class="step-number">🏆</span>
+                        <div class="step-content">
+                            <h5>Unlock 5x Rewards!</h5>
+                            <p>Get 3 referrals to unlock 5x bonus on ALL future referrals!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="example-box">
+                    <h5>📝 Example:</h5>
+                    <p><strong>Before 3 referrals:</strong> Friend deposits 200 → Your bonus = 12.5 coins/day</p>
+                    <p><strong>After 3 referrals (5x unlocked):</strong> Friend deposits 200 → Your bonus = 62.5 coins/day! 🎉</p>
+                </div>
+            </div>
+
+            <!-- Referral Code Section - Side by Side -->
+            <div class="referral-section">
+                <h3>👥 Invite Friends & Earn Rewards</h3>
+                
+                <div class="referral-codes-row">
+                    <!-- Enter Referral Code (Left) -->
+                    <div class="referral-code-input-card">
+                        <h4>🎁 Have a Referral Code?</h4>
+                        <p id="referralStatusText" class="status-text">Enter a friend's referral code to get linked!</p>
+                        <div class="code-input-container">
+                            <input type="text" id="dashboardReferralCode" placeholder="ENTER CODE">
+                            <button onclick="submitReferralCode()" class="btn-submit-code" id="submitRefBtn">Submit</button>
+                        </div>
+                        <p class="referral-status-message" id="referralStatusMessage"></p>
+                    </div>
+
+                    <!-- Your Referral Code (Right) -->
+                    <div class="referral-code-share-card">
+                        <h4>📋 Your Referral Code</h4>
+                        <p class="status-text">Share this code with friends!</p>
+                        <div class="code-container">
+                            <input type="text" id="userReferralCode" readonly class="referral-code-display">
+                            <button onclick="copyReferralCode()" class="btn-copy">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referral Stats -->
+                <div class="referral-stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Total Referrals</span>
+                            <span class="stat-value" id="totalReferrals">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Bonus Earned</span>
+                            <span class="stat-value" id="bonusEarned">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon">🎁</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Daily Claim Bonus</span>
+                            <span class="stat-value" id="dailyBonus">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Milestone Achievement -->
+                <div class="milestone-section" id="milestoneSection">
+                    <h4>🎯 Referral Milestone Challenge</h4>
+                    <div class="milestone-content">
+                        <div class="milestone-progress">
+                            <div class="milestone-bar">
+                                <div class="milestone-fill" id="milestoneFill" style="width: 0%"></div>
+                            </div>
+                            <p class="milestone-text">
+                                <span id="milestoneCount">0</span> / 3 Referrals
+                            </p>
+                        </div>
+                        <div class="milestone-reward" id="milestoneReward">
+                            <div class="reward-icon">🏆</div>
+                            <div class="reward-text">
+                                <h5>Unlock 5x Referral Rewards!</h5>
+                                <p id="milestoneStatus">Get 3 successful referrals to unlock 5x rewards on ALL future referrals!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referral List -->
+                <div class="referral-list-container">
+                    <h4>👥 Your Referrals</h4>
+                    <div id="referralList" class="referral-list">
+                        <p class="no-data">No referrals yet. Share your code to start earning!</p>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <!-- End Referral Page -->
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
